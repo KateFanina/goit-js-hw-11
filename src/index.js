@@ -65,6 +65,7 @@ const addImageNodes = ({ images, isOnLoad }) => {
               loading="lazy"
               src="${image.webformatURL}"
               width="250"
+              
             />
           </a>
           <div class="info">
