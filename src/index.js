@@ -11,43 +11,50 @@ const gallery = document.querySelector('.gallery');
 const loadMore = document.querySelector('.load-more');
 
 let page = 1;
-function onLoad(event) {
-  fetchSearchImages({
-    imageName: input.value,
-    page: (page += 1),
-  }).then(response => {
+async function onLoad(event) {
+  try {
+    const response = await fetchSearchImages({
+      imageName: input.value,
+      page: (page += 1),
+    });
+    const data = response.data;
     addImageNodes({
-      images: response.hits,
+      images: data.hits,
       isOnLoad: true,
     });
     lightbox.refresh();
-    if (response.totalHits === gallery.childElementCount) {
+    if (data.totalHits === gallery.childElementCount) {
       loadMore.hidden = true;
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
-  });
+  } catch (error) {
+    Notify.failure('Opps something went wrong! Please try again later!');
+  }
 }
 
-function searchImages(event) {
+async function searchImages(event) {
   event.preventDefault();
   if (input.value) {
     page = 1;
-    fetchSearchImages({
-      imageName: input.value,
-      page,
-    })
-      .then(response => {
-        if (!response?.hits?.length) {
-          Notify.info(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-          return;
-        }
-        addImageNodes({ images: response.hits });
-        loadMore.hidden = false;
-        lightbox.refresh();
-      })
-      .catch(error => console.log(error));
+    try {
+      const response = await fetchSearchImages({
+        imageName: input.value,
+        page,
+      });
+      const data = response.data;
+      if (!data?.hits?.length) {
+        Notify.info(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        return;
+      }
+      addImageNodes({ images: data.hits });
+      loadMore.hidden = false;
+      Notify.info(`Hooray! We found ${data.totalHits} images.`);
+      lightbox.refresh();
+    } catch (error) {
+      Notify.failure('Opps something went wrong! Please try again later!');
+    }
   }
 }
 loadMore.addEventListener('click', onLoad);
