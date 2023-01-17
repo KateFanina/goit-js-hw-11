@@ -46,6 +46,7 @@ async function searchImages(event) {
         Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+        gallery.innerHTML = '';
         return;
       }
       addImageNodes({ images: data.hits });
