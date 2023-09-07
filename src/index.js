@@ -9,8 +9,11 @@ const searchForm = document.querySelector('.search-form');
 const input = document.querySelector('input');
 const gallery = document.querySelector('.gallery');
 const loadMore = document.querySelector('.load-more');
+const basicImg = document.querySelector('.basic-img')
 
 let page = 1;
+basicImg.style.visibility = 'visible';
+
 async function onLoad(event) {
   try {
     const response = await fetchSearchImages({
@@ -34,6 +37,8 @@ async function onLoad(event) {
 
 async function searchImages(event) {
   event.preventDefault();
+  // basicImg.style.visibility = 'hidden';
+  basicImg.style.display = 'none';
   if (input.value) {
     page = 1;
     try {
@@ -65,7 +70,7 @@ const addImageNodes = ({ images, isOnLoad }) => {
   const markup = images
     .map(
       image =>
-        `<div class="photo-card" rel="stylesheet"  href="style.css">
+        `<li class="photo-card" rel="stylesheet"  href="style.css">
           <a data-type="image" class="gallery__item" href="${image.largeImageURL}">
             <img class="gallery__image"
               alt="${image.tags}"
@@ -94,7 +99,7 @@ const addImageNodes = ({ images, isOnLoad }) => {
               <span class="span">${image.downloads}</span>
             </p>
           </div>
-        </div>`
+        </li>`
     )
     .join('');
   if (isOnLoad) {
